@@ -1,15 +1,15 @@
-"use client";
-
-import { useState } from "react";
 import { BadgeDollarSign, BellRing, Smartphone, ShieldCheck, Webhook, History, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getPixTransactions } from "@/app/actions/pix";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-export default function PixMonitorPage() {
-  const [webhookUrl] = useState("https://vendaia.app/api/webhooks/mercadopago/live_xxxxx");
-  const [copied, setCopied] = useState(false);
+export default async function PixMonitorPage() {
+  const transactions = await getPixTransactions();
+  const webhookUrl = "https://saas-mercado-livre-hazel.vercel.app/api/webhooks/mercadopago";
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-10">
@@ -89,11 +89,10 @@ export default function PixMonitorPage() {
                       className="bg-zinc-900 border-zinc-800 font-mono text-sm text-emerald-400"
                     />
                     <Button 
-                      onClick={() => { navigator.clipboard.writeText(webhookUrl); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
                       variant="outline" 
                       className="border-zinc-700 hover:bg-zinc-800 w-24 shrink-0"
                     >
-                      {copied ? "Copiado!" : "Copiar"}
+                      Copiar
                     </Button>
                   </div>
                 </div>
@@ -144,20 +143,32 @@ export default function PixMonitorPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                 {[1,2,3].map((i) => (
-                    <div key={i} className="flex justify-between items-start text-sm border-b border-zinc-800/50 pb-3 last:border-0 last:pb-0">
-                       <div>
-                          <div className="font-medium text-white flex items-center gap-2">
-                             Pix Aprovado <span className="text-[10px] bg-emerald-500/20 text-emerald-500 px-1 rounded border border-emerald-500/30">Validado</span>
-                          </div>
-                          <div className="text-xs text-zinc-500 font-mono mt-1">ID: 94827361{i}</div>
-                       </div>
-                       <div className="text-right">
-                          <div className="text-emerald-400 font-semibold">+ R$ 79,90</div>
-                          <div className="text-[10px] text-zinc-500 mt-1">Hoje, 14:32</div>
-                       </div>
+                 {transactions.length === 0 ? (
+                    <div className="text-center py-6 text-zinc-500 text-sm">
+                       Nenhum pagamento recebido ainda.
                     </div>
-                 ))}
+                 ) : (
+                    transactions.map((tx: any) => (
+                      <div key={tx.id} className="flex justify-between items-start text-sm border-b border-zinc-800/50 pb-3 last:border-0 last:pb-0">
+                         <div>
+                            <div className="font-medium text-white flex items-center gap-2">
+                               Pix {tx.status === 'approved' ? 'Aprovado' : tx.status} 
+                               <span className="text-[10px] bg-emerald-500/20 text-emerald-500 px-1 rounded border border-emerald-500/30">
+                                  Validado
+                               </span>
+                            </div>
+                            <div className="text-xs text-zinc-500 font-mono mt-1">ID: {tx.external_id}</div>
+                            <div className="text-xs text-zinc-400 mt-0.5">{tx.payer_name}</div>
+                         </div>
+                         <div className="text-right">
+                            <div className="text-emerald-400 font-semibold">+ R$ {Number(tx.amount).toFixed(2)}</div>
+                            <div className="text-[10px] text-zinc-500 mt-1">
+                               {format(new Date(tx.received_at), "dd/MM 'às' HH:mm", { locale: ptBR })}
+                            </div>
+                         </div>
+                      </div>
+                    ))
+                 )}
               </div>
             </CardContent>
           </Card>
