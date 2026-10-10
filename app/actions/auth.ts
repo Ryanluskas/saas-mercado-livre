@@ -14,7 +14,7 @@ export async function signIn(formData: FormData) {
   });
 
   if (error) {
-    return redirect("/login?message=Não foi possível autenticar o usuário");
+    return redirect(`/login?message=${error.message}`);
   }
 
   return redirect("/dashboard");
@@ -31,7 +31,7 @@ export async function signUp(formData: FormData) {
   });
 
   if (error) {
-    return redirect("/login?message=Não foi possível criar a conta");
+    return redirect(`/cadastro?message=${error.message}`);
   }
 
   return redirect("/dashboard");
