@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col items-center">
@@ -10,12 +12,12 @@ export default function LandingPage() {
           Venda.IA
         </div>
         <nav className="hidden md:flex gap-6 text-sm text-gray-400">
-          <a href="#features" className="hover:text-white transition">Recursos</a>
-          <a href="#pricing" className="hover:text-white transition">Planos</a>
+          <Link href="/dashboard" className="hover:text-white transition">Recursos</Link>
+          <Link href="/dashboard/assinatura" className="hover:text-white transition">Planos</Link>
         </nav>
         <div className="flex gap-4">
-          <button className="text-sm px-4 py-2 hover:text-white transition">Entrar</button>
-          <button className="text-sm px-4 py-2 bg-primary text-white rounded-md hover:bg-emerald-600 transition font-medium">Começar Agora</button>
+          <Link href="/dashboard" className="text-sm px-4 py-2 hover:text-white transition">Entrar</Link>
+          <Link href="/dashboard" className="text-sm px-4 py-2 bg-primary text-white rounded-md hover:bg-emerald-600 transition font-medium">Começar Agora</Link>
         </div>
       </header>
 
@@ -30,9 +32,9 @@ export default function LandingPage() {
         </p>
         
         <div className="flex gap-4 mb-16">
-          <button className="px-8 py-4 bg-primary text-white rounded-md text-lg font-medium hover:bg-emerald-600 transition">
+          <Link href="/dashboard" className="px-8 py-4 bg-primary text-white rounded-md text-lg font-medium hover:bg-emerald-600 transition">
             Iniciar Operação Própria
-          </button>
+          </Link>
         </div>
 
         {/* Dashboard Preview */}
