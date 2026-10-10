@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type Produto = {
   id: string;
@@ -8,8 +8,8 @@ export type Produto = {
   fornecedor: string;
   custo: number;
   precoVenda: number;
-  estoque: 'Baixo' | 'Adequado' | 'Esgotado';
-  status: 'Ativo' | 'Em validação' | 'Pausado';
+  estoque: "Baixo" | "Adequado" | "Esgotado";
+  status: "Ativo" | "Em validação" | "Pausado";
   imagem: string;
 };
 
@@ -26,8 +26,8 @@ const produtosIniciais: Produto[] = [
     nome: "Smartwatch Y68 D20 Bluetooth Inteligente",
     sku: "Y68-PRETO",
     fornecedor: "Atacado BR",
-    custo: 25.50,
-    precoVenda: 79.90,
+    custo: 25.5,
+    precoVenda: 79.9,
     estoque: "Baixo",
     status: "Ativo",
     imagem: "https://via.placeholder.com/150",
@@ -37,8 +37,8 @@ const produtosIniciais: Produto[] = [
     nome: "Fone de Ouvido Bluetooth TWS F9-5",
     sku: "F9-5-PRETO",
     fornecedor: "TechDrop",
-    custo: 32.00,
-    precoVenda: 95.00,
+    custo: 32.0,
+    precoVenda: 95.0,
     estoque: "Adequado",
     status: "Em validação",
     imagem: "https://via.placeholder.com/150",
@@ -48,12 +48,12 @@ const produtosIniciais: Produto[] = [
     nome: "Mini Liquidificador Portátil Shake 380ml",
     sku: "LIQ-MINI-ROSA",
     fornecedor: "Casa & Co",
-    custo: 45.00,
-    precoVenda: 120.00,
+    custo: 45.0,
+    precoVenda: 120.0,
     estoque: "Esgotado",
     status: "Pausado",
     imagem: "https://via.placeholder.com/150",
-  }
+  },
 ];
 
 export const useAppStore = create<AppState>()(
@@ -63,16 +63,18 @@ export const useAppStore = create<AppState>()(
       adicionarProduto: (produto) =>
         set((state) => ({ produtos: [...state.produtos, produto] })),
       removerProduto: (id) =>
-        set((state) => ({ produtos: state.produtos.filter((p) => p.id !== id) })),
+        set((state) => ({
+          produtos: state.produtos.filter((p) => p.id !== id),
+        })),
       atualizarProduto: (id, updates) =>
         set((state) => ({
           produtos: state.produtos.map((p) =>
-            p.id === id ? { ...p, ...updates } : p
+            p.id === id ? { ...p, ...updates } : p,
           ),
         })),
     }),
     {
-      name: 'venda-ia-storage',
-    }
-  )
+      name: "venda-ia-storage",
+    },
+  ),
 );

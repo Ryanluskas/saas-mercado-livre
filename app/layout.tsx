@@ -6,7 +6,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "SaaS Dropshipping IA",
-  description: "Plataforma de gestão de dropshipping focada em evolução financeira",
+  description:
+    "Plataforma de gestão de dropshipping focada em evolução financeira",
 };
 
 export default function RootLayout({

@@ -1,125 +1,134 @@
-"use client";
-
-import { useState } from "react";
-import { Package, Search, Plus, Filter, MoreVertical, ExternalLink } from "lucide-react";
+import {
+  Package,
+  Search,
+  Plus,
+  Filter,
+  MoreVertical,
+  ExternalLink,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAppStore } from "@/lib/store";
+import {
+  getProdutos,
+  adicionarProduto,
+  removerProduto,
+} from "@/app/actions/produtos";
 
-export default function ProdutosPage() {
-  const { produtos, adicionarProduto } = useAppStore();
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const filteredProdutos = produtos.filter(p => 
-    p.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    p.sku.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleAddDemoProduct = () => {
-    adicionarProduto({
-      id: Math.random().toString(36).substring(7),
-      nome: "Novo Produto Adicionado",
-      sku: "NOVO-SKU",
-      fornecedor: "Novo Fornecedor",
-      custo: 50,
-      precoVenda: 150,
-      estoque: "Adequado",
-      status: "Ativo",
-      imagem: "https://via.placeholder.com/150",
-    });
-  };
+export default async function ProdutosPage() {
+  const produtos = await getProdutos();
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <Package className="text-primary" size={28} />
             Catálogo de Produtos
           </h1>
-          <p className="text-zinc-400 mt-1">Gerencie seu portfólio, defina preços e acompanhe o estoque nos fornecedores.</p>
+          <p className="text-muted mt-1">
+            Gerencie seu portfólio, defina preços e acompanhe o estoque.
+          </p>
         </div>
-        <Button onClick={handleAddDemoProduct} className="bg-primary text-white hover:bg-emerald-600 gap-2">
-          <Plus size={16} /> Adicionar Produto
-        </Button>
+
+        <form action={adicionarProduto}>
+          <input
+            type="hidden"
+            name="name"
+            value={`Produto Simulado #${Math.floor(Math.random() * 1000)}`}
+          />
+          <input type="hidden" name="price" value="150" />
+          <input type="hidden" name="cost" value="50" />
+          <input type="hidden" name="stock" value="100" />
+          <input type="hidden" name="margin" value="45" />
+          <Button
+            type="submit"
+            className="bg-primary text-foreground hover:bg-emerald-600 gap-2 font-bold"
+          >
+            <Plus size={16} /> Adicionar Teste no BD
+          </Button>
+        </form>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-card p-4 rounded-xl border border-zinc-800">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-background-secondary/50 p-4 rounded-xl border border-border">
         <div className="relative w-full sm:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
-          <Input 
-            placeholder="Buscar por nome ou SKU..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 bg-zinc-900 border-zinc-700 w-full focus-visible:ring-primary"
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+            size={16}
           />
-        </div>
-        <div className="flex gap-2 w-full sm:w-auto">
-          <Button variant="outline" className="border-zinc-700 text-zinc-300 w-full sm:w-auto gap-2 hover:bg-zinc-800">
-            <Filter size={16} /> Filtros
-          </Button>
+          <Input
+            placeholder="Buscar..."
+            className="pl-9 bg-background border-border w-full focus-visible:ring-emerald-500 text-foreground"
+          />
         </div>
       </div>
 
       <div className="grid gap-4">
-        {filteredProdutos.length === 0 ? (
-          <div className="text-center p-8 border border-dashed border-zinc-800 rounded-xl">
-             <p className="text-zinc-500">Nenhum produto encontrado.</p>
+        {!produtos || produtos.length === 0 ? (
+          <div className="text-center p-8 border border-dashed border-border rounded-xl">
+            <p className="text-muted">
+              Nenhum produto salvo no banco. Clique acima para testar a
+              persistência.
+            </p>
           </div>
         ) : (
-          filteredProdutos.map((produto) => (
-            <Card key={produto.id} className="bg-zinc-950/50 border-zinc-800 overflow-hidden hover:border-zinc-700 transition-colors">
+          produtos.map((produto: any) => (
+            <Card
+              key={produto.id}
+              className="bg-background-secondary/40 border-border overflow-hidden hover:border-border transition-colors"
+            >
               <CardContent className="p-0">
                 <div className="flex flex-col sm:flex-row items-center p-4 gap-6">
-                  <div className="h-20 w-20 rounded-md bg-zinc-800 shrink-0 flex items-center justify-center border border-zinc-700 text-zinc-600">
+                  <div className="h-20 w-20 rounded-md bg-background shrink-0 flex items-center justify-center border border-border text-zinc-600">
                     <Package size={24} />
                   </div>
-                  
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-zinc-200 truncate">{produto.nome}</h3>
-                      {produto.status === "Ativo" && (
-                         <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-green-500/10 text-green-500 border border-green-500/20">Ativo</span>
-                      )}
-                      {produto.status === "Em validação" && (
-                         <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">Em Validação</span>
-                      )}
-                      {produto.status === "Pausado" && (
-                         <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">Pausado</span>
-                      )}
+                      <h3 className="font-semibold text-foreground truncate">
+                        {produto.name}
+                      </h3>
+                      <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-primary/10 text-primary border border-primary/20">
+                        Salvo DB
+                      </span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-zinc-500">
-                      <span className="flex items-center gap-1">SKU: <span className="text-zinc-400">{produto.sku}</span></span>
+                    <div className="flex items-center gap-4 text-sm text-muted">
+                      <span>Estoque: {produto.stock}</span>
                       <span className="hidden sm:inline">&bull;</span>
-                      <span className="flex items-center gap-1">Fornecedor: <span className="text-zinc-400">{produto.fornecedor}</span></span>
+                      <span>Margem: {produto.margin}%</span>
                     </div>
                   </div>
 
                   <div className="flex flex-row sm:flex-col gap-4 sm:gap-1 text-sm sm:text-right shrink-0">
-                     <div>
-                        <span className="text-zinc-500 mr-2 sm:hidden">Custo:</span>
-                        <span className="text-zinc-400">R$ {produto.custo.toFixed(2)}</span>
-                     </div>
-                     <div>
-                        <span className="text-zinc-500 mr-2 sm:hidden">Venda:</span>
-                        <span className="font-medium text-white">R$ {produto.precoVenda.toFixed(2)}</span>
-                     </div>
-                  </div>
-
-                  <div className="shrink-0 w-32 flex flex-col items-start sm:items-end gap-1">
-                     {produto.estoque === "Adequado" && <span className="text-sm text-green-500">Estoque OK</span>}
-                     {produto.estoque === "Baixo" && <span className="text-sm text-yellow-500">Estoque Baixo</span>}
-                     {produto.estoque === "Esgotado" && <span className="text-sm text-red-500">Esgotado</span>}
+                    <div>
+                      <span className="text-muted mr-2 sm:hidden">Custo:</span>
+                      <span className="text-muted">
+                        R$ {Number(produto.cost).toFixed(2)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-muted mr-2 sm:hidden">Venda:</span>
+                      <span className="font-medium text-foreground">
+                        R$ {Number(produto.price).toFixed(2)}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="shrink-0 flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white" title="Abrir Anúncio">
-                      <ExternalLink size={18} />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white">
-                      <MoreVertical size={18} />
-                    </Button>
+                    <form
+                      action={async () => {
+                        "use server";
+                        await removerProduto(produto.id);
+                      }}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        type="submit"
+                        className="text-danger hover:text-red-400 hover:bg-danger/10"
+                      >
+                        Excluir
+                      </Button>
+                    </form>
                   </div>
                 </div>
               </CardContent>
