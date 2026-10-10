@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Package, Calculator, Megaphone, ShoppingCart, Users, Settings } from "lucide-react";
+import { LayoutDashboard, Package, Calculator, Megaphone, ShoppingCart, Users, Settings, BadgeDollarSign, CreditCard } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -19,8 +19,9 @@ export default function DashboardLayout({
         
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 px-2 mt-4">Principal</div>
-          <NavItem href="/dashboard" icon={<LayoutDashboard size={18} />} label="Dashboard" active />
-          <NavItem href="/dashboard/produtos" icon={<Package size={18} />} label="Produtos" />
+          <NavItem href="/dashboard" icon={<LayoutDashboard size={18} />} label="Dashboard Financeiro" active />
+          <NavItem href="/dashboard/pix" icon={<BadgeDollarSign size={18} />} label="Pix Monitor" />
+          <NavItem href="/dashboard/produtos" icon={<Package size={18} />} label="Produtos Dropshipping" />
           <NavItem href="/dashboard/pedidos" icon={<ShoppingCart size={18} />} label="Pedidos" />
           
           <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 px-2 mt-8">Ferramentas</div>
@@ -30,6 +31,7 @@ export default function DashboardLayout({
           <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 px-2 mt-8">Configurações</div>
           <NavItem href="/dashboard/fornecedores" icon={<Users size={18} />} label="Fornecedores" />
           <NavItem href="/dashboard/configuracoes" icon={<Settings size={18} />} label="Minha Conta" />
+          <NavItem href="/dashboard/assinatura" icon={<CreditCard size={18} />} label="Plano e Assinatura" />
         </nav>
         
         <div className="p-4 border-t border-card">
